@@ -1,18 +1,26 @@
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
+#include "max6675.h"
+ 
+int thermoSO = 19;
+int thermoCS = 23;
+int thermoSCK = 5;
 
+MAX6675 thermocouple(thermoSCK, thermoCS, thermoSO);
+ 
+// LCD
+#define SDA 13                    //Define SDA pins
+#define SCL 14                    //Define SCL pins
+LiquidCrystal_I2C lcd(0x27,16,2); //initialize the LCD
+#define NUM_SCREENS 2
+char lcdBuffer[NUM_SCREENS][2][16];
+int curScreen = 0;
+unsigned long lcdMillis;
+
+// fan
 #define PIN_POTEN    4
 #define PIN_FAN_PWM 25
 #define CHAN_PWM     0
-
-#define SDA 13                    //Define SDA pins
-#define SCL 14                    //Define SCL pins
-
-// LCD
-LiquidCrystal_I2C lcd(0x27,16,2); //initialize the LCD
-char lcdBuffer[2][2][16];
-int curScreen = 0;
-unsigned long lcdMillis;
 
 // tacho defs
 #define PIN_FAN_TACHO 34
@@ -27,10 +35,21 @@ void IRAM_ATTR handleInterruptFan1Tacho()
 }
 
 void printLCD() {
+
+  if (millis() - lcdMillis > 2000) {
+   lcdMillis = millis();
+   curScreen++;
+   curScreen = curScreen % NUM_SCREENS;
+  }
+  
   lcd.setCursor(0, 0);              
-  lcd.print(lcdBuffer[curScreen][0]);
+  lcd.printf("%-16s", lcdBuffer[curScreen][0]);
   lcd.setCursor(0, 1);              
-  lcd.print(lcdBuffer[curScreen][1]);
+  lcd.printf("%-16s", lcdBuffer[curScreen][1]);
+
+  Serial.println(lcdBuffer[curScreen][0]);
+  Serial.println(lcdBuffer[curScreen][1]);
+  
 }
  
 void setup()
@@ -79,6 +98,9 @@ void loop()
     sprintf(lcdBuffer[0][1], "RPM: %8d", fan1RPM);
     //sprintf(buffer, "c: %8d", count);
   }
+  
+  sprintf(lcdBuffer[1][0], "ohadohad");
+  sprintf(lcdBuffer[1][1], "Temp: %3.1f", thermocouple.readCelsius());
 
   printLCD();
  
