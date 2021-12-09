@@ -1,7 +1,14 @@
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
-#include "max6675.h"
- 
+#include <max6675.h>
+#include <PID_v1.h>
+
+// PID
+double Setpoint, Input, Output;
+PID myPID(&Input, &Output, &Setpoint, 2, 5, 1, DIRECT);
+
+
+// thermocouple
 int thermoSO = 19;
 int thermoCS = 23;
 int thermoSCK = 5;
@@ -57,7 +64,7 @@ void setup()
   Serial.begin(9600);
   Serial.println("starting..");
   // Our fan requests freq=25Khz. ESP32's spec for precision bound us to max of 11bits.
-  // (max frequency is 80M/11=39K)
+  // (max frequency is 80M/11^2=39K)
   ledcSetup(CHAN_PWM, 25000, 8); 
   ledcAttachPin(PIN_FAN_PWM, CHAN_PWM);
 
@@ -69,7 +76,11 @@ void setup()
   lcd.init();                     // LCD driver initialization
   lcd.backlight();                // Open the backlight
   lcdMillis = millis();
-  
+
+  Setpoint = 30;
+  myPID.SetOutputLimits(0, 255);
+  myPID.SetMode(AUTOMATIC);
+
   delay(500);
 }
  
@@ -84,7 +95,12 @@ void loop()
 
   sprintf(lcdBuffer[0][0], "PWM pct: %3.0f%%", potPct);
 
-  ledcWrite(CHAN_PWM, pwmVal);    // set the pulse width.
+  // set the PWM duty. fan specs states that min val is 30%.
+  if (potPct>30) {
+    ledcWrite(CHAN_PWM, pwmVal);
+  } else {
+   ledcWrite(CHAN_PWM, 0); 
+  }
 
   if (millis() - previousmills > RPM_CALC_PERIOD) {
     int elapsedMs = millis() - previousmills;
@@ -92,14 +108,17 @@ void loop()
     fan1InterruptCounter = 0;
     previousmills = millis();
 
-    fan1RPM = count / 2 * 1000 / elapsedMs * 60;
+    fan1RPM = count * 60 / 2 * 1000 / elapsedMs;
     Serial.println(fan1RPM);
 
     sprintf(lcdBuffer[0][1], "RPM: %8d", fan1RPM);
     //sprintf(buffer, "c: %8d", count);
   }
-  
-  sprintf(lcdBuffer[1][0], "ohadohad");
+
+  Input = (int) thermocouple.readCelsius();
+  myPID.Compute();
+ 
+  sprintf(lcdBuffer[1][0], "PID: %3.1f", Output);
   sprintf(lcdBuffer[1][1], "Temp: %3.1f", thermocouple.readCelsius());
 
   printLCD();
