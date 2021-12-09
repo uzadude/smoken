@@ -1,0 +1,4 @@
+connect max6675:
+https://github.com/adafruit/MAX6675-library/blob/master/examples/serialthermocouple/serialthermocouple.ino
+http://www.esp32learning.com/code/esp32-and-max6675-example.php
+
