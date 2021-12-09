@@ -8,7 +8,11 @@
 #define SDA 13                    //Define SDA pins
 #define SCL 14                    //Define SCL pins
 
+// LCD
 LiquidCrystal_I2C lcd(0x27,16,2); //initialize the LCD
+char lcdBuffer[2][2][16];
+int curScreen = 0;
+unsigned long lcdMillis;
 
 // tacho defs
 #define PIN_FAN_TACHO 34
@@ -17,11 +21,17 @@ int fan1RPM = 0;
 volatile int fan1InterruptCounter;
 unsigned long previousmills;
 
-void ICACHE_RAM_ATTR handleInterruptFan1Tacho()
+void IRAM_ATTR handleInterruptFan1Tacho()
 {
   fan1InterruptCounter++;
 }
 
+void printLCD() {
+  lcd.setCursor(0, 0);              
+  lcd.print(lcdBuffer[curScreen][0]);
+  lcd.setCursor(0, 1);              
+  lcd.print(lcdBuffer[curScreen][1]);
+}
  
 void setup()
 {
@@ -39,6 +49,7 @@ void setup()
   Wire.begin(SDA, SCL);           // attach the IIC pin
   lcd.init();                     // LCD driver initialization
   lcd.backlight();                // Open the backlight
+  lcdMillis = millis();
   
   delay(500);
 }
@@ -52,10 +63,7 @@ void loop()
   Serial.printf("ADC Val: %d, \t PWM: %d, \t pct: %.2f\n", adcVal, pwmVal, potPct);
   Serial.println(""); 
 
-  lcd.setCursor(0, 0);              
-  char buffer[16];
-  sprintf(buffer, "PWM pct: %3.0f%%", potPct);
-  lcd.print(buffer);        //display the Humidity on the LCD1602
+  sprintf(lcdBuffer[0][0], "PWM pct: %3.0f%%", potPct);
 
   ledcWrite(CHAN_PWM, pwmVal);    // set the pulse width.
 
@@ -64,16 +72,15 @@ void loop()
     int count = fan1InterruptCounter;
     fan1InterruptCounter = 0;
     previousmills = millis();
-    
-    fan1RPM = count / 2 * elapsedMs / 1000;
+
+    fan1RPM = count / 2 * 1000 / elapsedMs * 60;
     Serial.println(fan1RPM);
 
-    lcd.setCursor(0, 1);
-    char buffer[16];
-    sprintf(buffer, "RPM: %8d", fan1RPM);
-    lcd.print(buffer);
-
+    sprintf(lcdBuffer[0][1], "RPM: %8d", fan1RPM);
+    //sprintf(buffer, "c: %8d", count);
   }
+
+  printLCD();
  
   delay(1000);
 }
