@@ -43,7 +43,7 @@ void IRAM_ATTR handleInterruptFan1Tacho()
 
 void printLCD() {
 
-  if (millis() - lcdMillis > 2000) {
+  if (millis() - lcdMillis > 3000) {
    lcdMillis = millis();
    curScreen++;
    curScreen = curScreen % NUM_SCREENS;
@@ -72,9 +72,10 @@ void setup()
   attachInterrupt(PIN_FAN_TACHO, handleInterruptFan1Tacho, FALLING);
   previousmills = millis();
 
-  Wire.begin(SDA, SCL);           // attach the IIC pin
-  lcd.init();                     // LCD driver initialization
-  lcd.backlight();                // Open the backlight
+  // LCD init
+  Wire.begin(SDA, SCL);
+  lcd.init();
+  lcd.backlight();
   lcdMillis = millis();
 
   Setpoint = 30;
@@ -86,40 +87,50 @@ void setup()
  
 void loop()
 {
- 
-  int adcVal = analogRead(PIN_POTEN); //read adc (12 bit)
-  int pwmVal = map(adcVal, 0, 4095, 0, 255);  // re-map to pwmVal (8 bit)
-  double potPct = adcVal / 4095.0 * 100;
-  Serial.printf("ADC Val: %d, \t PWM: %d, \t pct: %.2f\n", adcVal, pwmVal, potPct);
-  Serial.println(""); 
 
-  sprintf(lcdBuffer[0][0], "PWM pct: %3.0f%%", potPct);
+  Input = thermocouple.readCelsius();
+  myPID.Compute();
+ 
+  sprintf(lcdBuffer[0][0], "tgt:%3.0f cur:%3.0f", Setpoint, Input);
+   
+  int adcVal = analogRead(PIN_POTEN); //read adc (12 bit)
+  Serial.printf("ADC Val: %d\n", adcVal);
+
+  sprintf(lcdBuffer[0][1], "Man:%3.0f Aut:%3.0f", adcVal/4095.0*100, Output/255*100);
+
+  int pwmVal=0;
+  // set fan's PWM manually if adc>0, otherwise by PID
+  if (adcVal>100) {
+    pwmVal = map(adcVal, 0, 4095, 0, 255);  // re-map to pwmVal (8 bit)
+  } else {
+    pwmVal = (int) Output;
+  }
+
+  double pwmPct = pwmVal / 255.0 * 100;
+  
+  Serial.printf("PWM: %d, \t pct: %.2f\n", pwmVal, pwmPct);
+  sprintf(lcdBuffer[1][0], "PWM pct: %3.0f%%", pwmPct);
 
   // set the PWM duty. fan specs states that min val is 30%.
-  if (potPct>30) {
+  if (pwmPct>30) {
     ledcWrite(CHAN_PWM, pwmVal);
   } else {
    ledcWrite(CHAN_PWM, 0); 
   }
 
+  // calc fan RPM
   if (millis() - previousmills > RPM_CALC_PERIOD) {
     int elapsedMs = millis() - previousmills;
     int count = fan1InterruptCounter;
     fan1InterruptCounter = 0;
     previousmills = millis();
 
-    fan1RPM = count * 60 / 2 * 1000 / elapsedMs;
+    fan1RPM = (int) (count * 60.0 / 2 * 1000 / elapsedMs);
     Serial.println(fan1RPM);
 
-    sprintf(lcdBuffer[0][1], "RPM: %8d", fan1RPM);
+    sprintf(lcdBuffer[1][1], "RPM: %8d", fan1RPM);
     //sprintf(buffer, "c: %8d", count);
   }
-
-  Input = (int) thermocouple.readCelsius();
-  myPID.Compute();
- 
-  sprintf(lcdBuffer[1][0], "PID: %3.1f", Output);
-  sprintf(lcdBuffer[1][1], "Temp: %3.1f", thermocouple.readCelsius());
 
   printLCD();
  
