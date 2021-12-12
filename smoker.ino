@@ -39,7 +39,7 @@ int curScreen = 0;
 unsigned long lcdMillis;
 
 // fan
-#define PIN_POTEN    4
+#define PIN_POTEN    32 // (4) doesn't work with wifi.h
 #define PIN_FAN_PWM 25
 #define CHAN_PWM     0
 

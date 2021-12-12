@@ -17,3 +17,4 @@ nice ESP32 tutorials: https://lastminuteengineers.com/handling-esp32-gpio-interr
 Gotchas:
 - PWM's max freq/precision
 - tacho with RC filter
+- pin 4 as ADC with wifi.h bug (https://github.com/espressif/arduino-esp32/issues/102)
