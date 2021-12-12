@@ -2,11 +2,25 @@
 #include <LiquidCrystal_I2C.h>
 #include <max6675.h>
 #include <PID_v1.h>
+#include <WiFi.h>
+#include <WebServer.h>
+
+// Web Server AP
+//const char* ssid = "smoken";
+//const char* password = "12345678";
+//IPAddress local_ip(192,168,1,1);
+//IPAddress gateway(192,168,1,1);
+//IPAddress subnet(255,255,255,0);
+
+// Station
+const char* ssid = "***REMOVED***";
+const char* password = "***REMOVED***";
+
+WebServer server(80);
 
 // PID
 double Setpoint, Input, Output;
 PID myPID(&Input, &Output, &Setpoint, 2, 5, 1, DIRECT);
-
 
 // thermocouple
 int thermoSO = 19;
@@ -82,11 +96,36 @@ void setup()
   myPID.SetOutputLimits(0, 255);
   myPID.SetMode(AUTOMATIC);
 
-  delay(500);
+  //WiFi.softAP(ssid, password);
+  //WiFi.softAPConfig(local_ip, gateway, subnet);
+  //delay(100);
+
+  WiFi.begin(ssid, password);
+
+  //check wi-fi is connected to wi-fi network
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.print(".");
+  }
+  Serial.println("");
+  Serial.println("WiFi connected..!");
+  Serial.print("Got IP: ");
+  Serial.println(WiFi.localIP());
+  
+  server.on("/", handle_OnConnect);
+  //server.on("/led1on", handle_led1on);
+  server.onNotFound(handle_NotFound);
+  
+  server.begin();
+  Serial.println("HTTP server started");
+  
+  delay(300);
 }
  
 void loop()
 {
+
+  server.handleClient();
 
   Input = thermocouple.readCelsius();
   myPID.Compute();
@@ -100,7 +139,7 @@ void loop()
 
   int pwmVal=0;
   // set fan's PWM manually if adc>0, otherwise by PID
-  if (adcVal>100) {
+  if (adcVal>0) {
     pwmVal = map(adcVal, 0, 4095, 0, 255);  // re-map to pwmVal (8 bit)
   } else {
     pwmVal = (int) Output;
@@ -135,4 +174,37 @@ void loop()
   printLCD();
  
   delay(1000);
+}
+
+void handle_OnConnect() {
+  server.send(200, "text/html", SendHTML()); 
+}
+
+void handle_NotFound(){
+  server.send(404, "text/plain", "Not found");
+}
+
+String SendHTML(){
+  String ptr = "<!DOCTYPE html> <html>\n";
+  ptr +="<head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, user-scalable=no\">\n";
+  ptr +="<title>Smoken PID control</title>\n";
+  ptr +="<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center;}\n";
+  ptr +="body{margin-top: 50px;} h1 {color: #444444;margin: 50px auto 30px;} h3 {color: #444444;margin-bottom: 50px;}\n";
+  ptr +=".button {display: block;width: 80px;background-color: #3498db;border: none;color: white;padding: 13px 30px;text-decoration: none;font-size: 25px;margin: 0px auto 35px;cursor: pointer;border-radius: 4px;}\n";
+  ptr +=".button-on {background-color: #3498db;}\n";
+  ptr +=".button-on:active {background-color: #2980b9;}\n";
+  ptr +=".button-off {background-color: #34495e;}\n";
+  ptr +=".button-off:active {background-color: #2c3e50;}\n";
+  ptr +="p {font-size: 14px;color: #888;margin-bottom: 10px;}\n";
+  ptr +="</style>\n";
+  ptr +="</head>\n";
+  ptr +="<body>\n";
+  ptr +="<h1>Smoken Web Server</h1>\n";
+
+  //ptr +="<p>LED2 Status: ON</p><a class=\"button button-off\" href=\"/led2off\">OFF</a>\n";
+  ptr +="<a class=\"button button-off\" href=\"/led2off\">Update</a>\n";
+
+  ptr +="</body>\n";
+  ptr +="</html>\n";
+  return ptr;
 }
