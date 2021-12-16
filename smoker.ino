@@ -5,17 +5,20 @@
 #include <WiFi.h>
 #include <WebServer.h>
 
-// Web Server AP
+
+// wifi
+/// AP
 //const char* ssid = "smoken";
 //const char* password = "12345678";
 //IPAddress local_ip(192,168,1,1);
 //IPAddress gateway(192,168,1,1);
 //IPAddress subnet(255,255,255,0);
 
-// Station
+/// Station
 const char* ssid = "***REMOVED***";
 const char* password = "***REMOVED***";
 
+// Web Server
 WebServer server(80);
 
 // PID
@@ -24,11 +27,14 @@ PID myPID(&Input, &Output, &Setpoint, 2, 5, 1, DIRECT);
 
 // thermocouple
 int thermoSO = 19;
-int thermoCS = 23;
 int thermoSCK = 5;
+int thermoCS1 = 23;
+int thermoCS2 = 22;
 
-MAX6675 thermocouple(thermoSCK, thermoCS, thermoSO);
- 
+MAX6675 tc1(thermoSCK, thermoCS1, thermoSO);
+MAX6675 tc2(thermoSCK, thermoCS2, thermoSO);
+
+
 // LCD
 #define SDA 13                    //Define SDA pins
 #define SCL 14                    //Define SCL pins
@@ -72,16 +78,26 @@ void printLCD() {
   Serial.println(lcdBuffer[curScreen][1]);
   
 }
- 
+
+
 void setup()
 {
   Serial.begin(9600);
   Serial.println("starting..");
+
+  // Thermocouples init
+  digitalWrite(thermoCS1, LOW);
+  digitalWrite(thermoCS2, LOW);
+
+  // Fan
+  
+  /// PWM
   // Our fan requests freq=25Khz. ESP32's spec for precision bound us to max of 11bits.
   // (max frequency is 80M/11^2=39K)
   ledcSetup(CHAN_PWM, 25000, 8); 
   ledcAttachPin(PIN_FAN_PWM, CHAN_PWM);
 
+  // tacho
   pinMode(PIN_FAN_TACHO, INPUT_PULLUP);
   attachInterrupt(PIN_FAN_TACHO, handleInterruptFan1Tacho, FALLING);
   previousmills = millis();
@@ -96,6 +112,7 @@ void setup()
   myPID.SetOutputLimits(0, 255);
   myPID.SetMode(AUTOMATIC);
 
+  // Wifi
   //WiFi.softAP(ssid, password);
   //WiFi.softAPConfig(local_ip, gateway, subnet);
   //delay(100);
@@ -111,7 +128,8 @@ void setup()
   Serial.println("WiFi connected..!");
   Serial.print("Got IP: ");
   Serial.println(WiFi.localIP());
-  
+
+  // Web Server
   server.on("/", handle_OnConnect);
   //server.on("/led1on", handle_led1on);
   server.onNotFound(handle_NotFound);
@@ -127,10 +145,18 @@ void loop()
 
   server.handleClient();
 
-  Input = thermocouple.readCelsius();
+  digitalWrite(thermoCS1, LOW);
+  Input = tc1.readCelsius();
+  digitalWrite(thermoCS1, HIGH);
   myPID.Compute();
+
+  delay(100);
+  digitalWrite(thermoCS2, LOW);
+  double tmp2 = tc2.readCelsius();
+  digitalWrite(thermoCS2, HIGH);
+  delay(100);
  
-  sprintf(lcdBuffer[0][0], "tgt:%3.0f cur:%3.0f", Setpoint, Input);
+  sprintf(lcdBuffer[0][0], "%3.0f %3.0f %3.0f", Input, tmp2, Setpoint);
    
   int adcVal = analogRead(PIN_POTEN); //read adc (12 bit)
   Serial.printf("ADC Val: %d\n", adcVal);
