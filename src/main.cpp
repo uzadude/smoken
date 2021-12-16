@@ -1,4 +1,3 @@
-#include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 #include <max6675.h>
 #include <PID_v1.h>
@@ -28,17 +27,15 @@ PID myPID(&Input, &Output, &Setpoint, 2, 5, 1, DIRECT);
 // thermocouple
 int thermoSO = 19;
 int thermoSCK = 5;
-int thermoCS1 = 23;
-int thermoCS2 = 22;
+int thermoCS1 = 13;
+int thermoCS2 = 14;
 
 MAX6675 tc1(thermoSCK, thermoCS1, thermoSO);
 MAX6675 tc2(thermoSCK, thermoCS2, thermoSO);
 
 
 // LCD
-#define SDA 13                    //Define SDA pins
-#define SCL 14                    //Define SCL pins
-LiquidCrystal_I2C lcd(0x27,16,2); //initialize the LCD
+LiquidCrystal_I2C lcd(0x27, 16, 2); // SDA/SCL must be connected to 21/22
 #define NUM_SCREENS 2
 char lcdBuffer[NUM_SCREENS][2][16];
 int curScreen = 0;
@@ -103,7 +100,7 @@ void setup()
   previousmills = millis();
 
   // LCD init
-  Wire.begin(SDA, SCL);
+  //Wire.begin(SDA, SCL);
   lcd.init();
   lcd.backlight();
   lcdMillis = millis();
@@ -130,9 +127,9 @@ void setup()
   Serial.println(WiFi.localIP());
 
   // Web Server
-  server.on("/", handle_OnConnect);
+  //server.on("/", handle_OnConnect);
   //server.on("/led1on", handle_led1on);
-  server.onNotFound(handle_NotFound);
+  //server.onNotFound(handle_NotFound);
   
   server.begin();
   Serial.println("HTTP server started");
@@ -203,7 +200,7 @@ void loop()
 }
 
 void handle_OnConnect() {
-  server.send(200, "text/html", SendHTML()); 
+  //server.send(200, "text/html", SendHTML()); 
 }
 
 void handle_NotFound(){
