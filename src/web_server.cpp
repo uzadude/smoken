@@ -28,7 +28,7 @@ String SendHTML(){
 }
 
 void handle_OnConnect() {
-  //server.send(200, "text/html", SendHTML()); 
+  server.send(200, "text/html", SendHTML()); 
 }
 
 void handle_NotFound(){
