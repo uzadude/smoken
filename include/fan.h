@@ -1,0 +1,2 @@
+void initFan();
+int getFanRPM();

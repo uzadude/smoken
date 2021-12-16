@@ -1,5 +1,5 @@
 # Charcoal Smoker PID
-A temprature PID controled fan with ESP32. 
+A temprature PID controled fan with ESP32.
 
 ## References
 my kit:
