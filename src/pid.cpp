@@ -5,9 +5,10 @@ double Setpoint, Input, Output;
 PID myPID(&Input, &Output, &Setpoint, 2, 5, 1, DIRECT);
 
 
-void initPID(double setpoint) {
+void setPIDconfs(int setpoint, int min, int max, int Kp, int Ki, int Kd) {
   Setpoint = setpoint;
-  myPID.SetOutputLimits(0, 255);
+  myPID.SetOutputLimits(min, max);
+  myPID.SetTunings(Kp, Ki, Kd);
   myPID.SetMode(AUTOMATIC);
 }
 

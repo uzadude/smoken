@@ -21,19 +21,24 @@ void initLCD() {
   lcdMillis = millis();
 }
 
+void printLCD(int screenNum) {
+    lcd.setCursor(0, 0);              
+    lcd.printf("%-16s", lcdBuffer[screenNum][0]);
+    lcd.setCursor(0, 1);              
+    lcd.printf("%-16s", lcdBuffer[screenNum][1]);
+}
+
 void refreshLCD() {
 
   if (millis() - lcdMillis > 3000) {
    lcdMillis = millis();
+
+    printLCD(curScreen);
+    Serial.println(lcdBuffer[curScreen][0]);
+    Serial.println(lcdBuffer[curScreen][1]);
+
    curScreen++;
    curScreen = curScreen % NUM_SCREENS;
   }
   
-  lcd.setCursor(0, 0);              
-  lcd.printf("%-16s", lcdBuffer[curScreen][0]);
-  lcd.setCursor(0, 1);              
-  lcd.printf("%-16s", lcdBuffer[curScreen][1]);
-
-  Serial.println(lcdBuffer[curScreen][0]);
-  Serial.println(lcdBuffer[curScreen][1]);
 }

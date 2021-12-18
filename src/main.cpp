@@ -6,8 +6,9 @@
 #include <lcd.h>
 #include <pid.h>
 #include <wifi.h>
-#include <web_server.h>
+//#include <web_server.h>
 #include <pwm.h>
+#include <web_config.h>
 
 
 void setup()
@@ -15,19 +16,21 @@ void setup()
   Serial.begin(9600);
   Serial.println("starting..");
 
+  initLCD();
+
+  initWIFI();
+  //initWebServer();
+  initWebConfig();
+
   initThermocouple();
 
   initFan();
 
-  initLCD();
+  setPIDconfs(conf.getInt("setpoint"), conf.getInt("fmin"), conf.getInt("fmax"),
+              conf.getInt("kp"), conf.getInt("ki"), conf.getInt("kd"));
+  //setPIDconfs(30, 0, 255, 2, 5, 1);
 
-  initPID(30);
-
-  initWIFI();
-
-  initWebServer();
-
-  delay(300);
+  delay(2000);
 }
  
 void loop()
@@ -39,12 +42,11 @@ void loop()
   updatePID(tmp1);
 
   double tmp2 = readTC2();
-  sprintf(getLCDbuffer(0,0), "%3.0f %3.0f %3.0f", tmp1, tmp2, 30.0);
+  sprintf(getLCDbuffer(0,0), "%3.0f %3.0f %3d", tmp1, tmp2, conf.getInt("setpoint"));
    
   handlePWM();
 
   int fan_rpm = getFanRPM();
-  Serial.println(fan_rpm);
   sprintf(getLCDbuffer(1, 1), "RPM: %8d", fan_rpm);
 
   refreshLCD();

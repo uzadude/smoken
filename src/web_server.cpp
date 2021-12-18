@@ -1,6 +1,6 @@
 #include <WebServer.h>
 
-WebServer server(80);
+WebServer ws(8080);
 
 String SendHTML(){
   String ptr = "<!DOCTYPE html> <html>\n";
@@ -28,18 +28,18 @@ String SendHTML(){
 }
 
 void handle_OnConnect() {
-  server.send(200, "text/html", SendHTML()); 
+  ws.send(200, "text/html", SendHTML()); 
 }
 
 void handle_NotFound(){
-  server.send(404, "text/plain", "Not found");
+  ws.send(404, "text/plain", "Not found");
 }
 
 void initWebServer() {
-  server.on("/", handle_OnConnect);
+  ws.on("/", handle_OnConnect);
   //server.on("/led1on", handle_led1on);
-  server.onNotFound(handle_NotFound);
+  ws.onNotFound(handle_NotFound);
   
-  server.begin();
+  ws.begin();
   Serial.println("HTTP server started");
 }

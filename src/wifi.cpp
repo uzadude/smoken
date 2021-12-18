@@ -1,5 +1,6 @@
 #include <config.h>
 #include <WiFi.h>
+#include "lcd.h"
 
 
 void initWIFI() {
@@ -19,4 +20,8 @@ void initWIFI() {
   Serial.println("WiFi connected..!");
   Serial.print("Got IP: ");
   Serial.println(WiFi.localIP());
+
+  sprintf(getLCDbuffer(0,0), "Wifi Connected");
+  sprintf(getLCDbuffer(0,1), "%s", WiFi.localIP().toString().c_str());
+  printLCD(0);
 }
