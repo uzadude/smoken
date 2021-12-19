@@ -1,6 +1,36 @@
 # Charcoal Smoker PID
 A temprature PID controled fan with ESP32.
 
+## Inventory List
+
+|name|price|quantity|
+|----|----|---|
+|**Electronics**
+|4p connector|2.6|10
+|wire 4p|5|5m
+|12v to 5v step down|4|4
+|LCD 1602|2.4|1
+|Esp 32|4|1
+|3.3k resistor|1.5|300
+|small bread board|4.3|3
+|wires|3|120
+|12v power supply|3.7|1
+|thermocouple|5.3|2
+|max6675|7.3|2
+|12v blower fan 4pin|15.4|1
+|**Mechanics**
+|analog temperature gauge|4|1
+|gas spring|15|2
+|sealing tape|5|3.6m
+|cover|12|
+|**Equip**
+|cutting discs|5|5
+|sanding discs (40 grit)|13|5
+|folding handles|5|2
+|quick lock|4.5|2
+|||
+|**Total**|**122$**|
+
 ## References
 my kit:
 https://www.amazon.com/Freenove-ESP32-WROVER-Contained-Compatible-Bluetooth/dp/B08FM2NCST
