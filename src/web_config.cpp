@@ -130,12 +130,13 @@ void handleRoot() {
   }
 }
 
-
-
-void initWebConfig() {
+void initConfig() {
   Serial.println(params);
   conf.setDescription(params);
   conf.readConfig();
+}
+
+void initWebConfig() {
   //initWiFi();
   char dns[30];
   sprintf(dns,"%s.local",conf.getApName());

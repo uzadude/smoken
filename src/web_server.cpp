@@ -24,6 +24,7 @@ String SendHTML(){
     <body>
       <h1>Smoken Web Server</h1>
       <div id="chart-t1" class="container"></div>
+      <a class="button button-off" href="/conf">Settings</a>
     </body>
     <script>
       var chartT = new Highcharts.Chart({
@@ -90,7 +91,7 @@ void handle_data() {
   addArray(doc, "t2", dm.tmpsQ2, 1);
   addArray(doc, "t3", dm.tmpsQ3, 1);
   addArray(doc, "pwm", dm.pwm, 1);
-  addArray(doc, "rpm", dm.rpm, 100);
+  addArray(doc, "rpm", dm.rpm, 1000);
 
   //doc["blah"] = 123;
 

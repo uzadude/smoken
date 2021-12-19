@@ -24,7 +24,7 @@ void handlePWM() {
 
   pwmPct = pwmVal / 255.0 * 100;
   
-  Serial.printf("PWM: %d, \t pct: %.2f\n", pwmVal, pwmPct);
+  //Serial.printf("PWM: %d, \t pct: %.2f\n", pwmVal, pwmPct);
   sprintf(getLCDbuffer(1,0), "PWM pct: %3.0f%%", pwmPct);
 
   // set the PWM duty. fan specs states that min val is 30%.

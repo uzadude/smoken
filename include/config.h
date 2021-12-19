@@ -21,18 +21,3 @@ const int thermoCS2 = 13;
 // --- LCD --------------------------------------------------------------------------------------------------------------------------------
 // SDA/SCL must be connected to 21/22
 #define NUM_SCREENS 2
-
-
-// --- wifi --------------------------------------------------------------------------------------------------------------------------------
-
-/// AP
-//const char* ssid = "smoken";
-//const char* password = "12345678";
-//IPAddress local_ip(192,168,1,1);
-//IPAddress gateway(192,168,1,1);
-//IPAddress subnet(255,255,255,0);
-
-/// Station
-const char* const ssid = "***REMOVED***";
-const char* const password = "***REMOVED***";
-

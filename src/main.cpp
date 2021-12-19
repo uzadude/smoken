@@ -18,6 +18,7 @@ void setup()
 
   initLCD();
 
+  initConfig();
   initWIFI();
   initWebServer();
 
