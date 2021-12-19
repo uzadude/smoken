@@ -1,8 +1,12 @@
 #include <config.h>
 #include <max6675.h>
 
-MAX6675 tc1(thermoSCK, thermoCS1, thermoSO);
-MAX6675 tc2(thermoSCK, thermoCS2, thermoSO);
+int tcCS[]  = {thermoCS1, thermoCS2};
+
+MAX6675 tc[] = {
+  MAX6675(thermoSCK, tcCS[0], thermoSO),
+  MAX6675(thermoSCK, tcCS[1], thermoSO),
+};
 
 void initThermocouple(void) {
       // Thermocouples init
@@ -10,18 +14,10 @@ void initThermocouple(void) {
   digitalWrite(thermoCS2, LOW);
 }
 
-double readTC(int tcs) {
-  digitalWrite(tcs, LOW);
-  double ret = tc1.readCelsius();
-  digitalWrite(tcs, HIGH);
+double readTC(int i) {
+  digitalWrite(tcCS[i], LOW);
+  double ret = tc[i].readCelsius();
+  digitalWrite(tcCS[i], HIGH);
   delay(100);
   return ret;
-}
-
-double readTC1() {
-    return readTC(thermoCS1);
-}
-
-double readTC2() {
-    return readTC(thermoCS2);
 }

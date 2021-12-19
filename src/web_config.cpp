@@ -1,9 +1,8 @@
 #include <WebServer.h>
 #include <ESPmDNS.h>
-
-
 #include <WebConfig.h>
 #include <pid.h>
+#include <web_server.h>
 
 String params = "["
   "{"
@@ -84,7 +83,6 @@ String params = "["
 //   "}"
   "]";
 
-WebServer server;
 WebConfig conf;
 
 // boolean initWiFi() {
@@ -144,8 +142,8 @@ void initWebConfig() {
   if (MDNS.begin(dns)) {
     Serial.println("MDNS responder gestartet");
   }
-  server.on("/",handleRoot);
-  server.begin(80);
+  server.on("/conf",handleRoot);
+  //server.begin(80);
 }
 
 // void loop() {

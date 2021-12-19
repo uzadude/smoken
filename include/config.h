@@ -2,8 +2,8 @@
 
 const int thermoSO = 19;
 const int thermoSCK = 5;
-const int thermoCS1 = 13;
-const int thermoCS2 = 14;
+const int thermoCS1 = 14;
+const int thermoCS2 = 13;
 
 
 // --- fan --------------------------------------------------------------------------------------------------------------------------------

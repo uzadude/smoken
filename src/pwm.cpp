@@ -4,6 +4,7 @@
 #include "pid.h"
 #include <web_config.h>
 
+double pwmPct=0;
 
 void handlePWM() {
   int adcVal = analogRead(PIN_POTEN); //read adc (12 bit)
@@ -21,7 +22,7 @@ void handlePWM() {
     pwmVal = map((int) getPIDoutput(), 0, 100, 0, 255);
   }
 
-  double pwmPct = pwmVal / 255.0 * 100;
+  pwmPct = pwmVal / 255.0 * 100;
   
   Serial.printf("PWM: %d, \t pct: %.2f\n", pwmVal, pwmPct);
   sprintf(getLCDbuffer(1,0), "PWM pct: %3.0f%%", pwmPct);
@@ -33,4 +34,8 @@ void handlePWM() {
     ledcWrite(CHAN_PWM, 0); 
   }
 
+}
+
+int getPWM() {
+  return (int) pwmPct;
 }

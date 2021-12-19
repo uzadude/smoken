@@ -1,1 +1,2 @@
 void handlePWM();
+int getPWM();

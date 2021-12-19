@@ -1,3 +1,2 @@
-void initThermocouple(void);
-double readTC1();
-double readTC2();
+void initThermocouple();
+double readTC(int i);

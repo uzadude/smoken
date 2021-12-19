@@ -1,4 +1,4 @@
 #include <WebServer.h>
 
 void initWebServer();
-//extern WebServer server;
+extern WebServer server;
