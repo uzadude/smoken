@@ -2,6 +2,8 @@
 #include <HardwareSerial.h>
 
 #define NUM_HIST_POINTS    30
+#define HIST_SAMPLE_INTERVAL    5000
+unsigned long updateDataMillis = millis();
 
 dataMeasures measures;
 
@@ -19,12 +21,16 @@ void updateDQ(std::deque<double> &dq, double dv) {
 }
 
 void addReads(double tmp1, double tmp2, double tmp3, double pwm, double rpm) {
+  if (millis() - updateDataMillis > HIST_SAMPLE_INTERVAL) {
+    updateDataMillis = millis();
     updateDQ(measures.tmpsQ1, tmp1);
     updateDQ(measures.tmpsQ2, tmp2);
     updateDQ(measures.tmpsQ3, tmp3);
     updateDQ(measures.pwm, pwm);
     updateDQ(measures.rpm, rpm);
-    }
+  }
+
+}
 
 dataMeasures getMeasures() {
     return measures;
