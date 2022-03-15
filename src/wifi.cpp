@@ -2,6 +2,7 @@
 #include <WiFi.h>
 #include "lcd.h"
 #include <web_config.h>
+#include <ESPmDNS.h>
 
 void initWIFI() {
   boolean connected = false;
@@ -30,8 +31,13 @@ void initWIFI() {
   }
   if (!connected) {
     WiFi.mode(WIFI_AP);
-    WiFi.softAP(conf.getApName(),"",1);  
-    wifi_str = conf.getApName();
+    WiFi.softAP(conf.getApName(), "12345678");
+    delay(100);
+    Serial.print("Started AP: ");
+    Serial.println(conf.getApName());
+    wifi_str = WiFi.softAPIP().toString().c_str();
+    Serial.print("IP-Address AP WIFI= ");
+    Serial.println(WiFi.softAPIP());
   }
 
   sprintf(getLCDbuffer(0,0), "Wifi is up");

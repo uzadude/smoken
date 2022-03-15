@@ -3,14 +3,14 @@
 const int thermoSO = 19;
 const int thermoSCK = 5;
 const int thermoCS1 = 14;
-const int thermoCS2 = 13;
+const int thermoCS2 = 27;
 
 
 // --- fan --------------------------------------------------------------------------------------------------------------------------------
 
 // potentionmeter
 #define PIN_POTEN    32 // (4) doesn't work with wifi.h
-#define PIN_FAN_PWM 25
+#define PIN_FAN_PWM  25
 #define CHAN_PWM     0
 
 // tacho defs
