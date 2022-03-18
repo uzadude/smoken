@@ -1,6 +1,7 @@
 #include <deque>
 
 struct dataMeasures {
+    std::deque<unsigned long> time_millis;
     std::deque<double> tmpsQ1;
     std::deque<double> tmpsQ2;
     std::deque<double> tmpsQ3;
