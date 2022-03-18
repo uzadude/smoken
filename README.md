@@ -1,5 +1,8 @@
-# Charcoal Smoker PID
-A temprature PID controled fan with ESP32.
+# Charcoal Smoker with Fan PID
+A temprature PID controlled fan with ESP32. This project combines welding with IOT.
+
+## Background
+
 
 ## Inventory List
 
@@ -55,6 +58,14 @@ https://playground.arduino.cc/Code/PIDLibrary/
 
 nice ESP32 tutorials: https://lastminuteengineers.com/handling-esp32-gpio-interrupts-tutorial/
 
+PCB:
+- Used KiCAD
+- nice refs: https://medium.com/invent-io/getting-started-with-embedded-systems-3-schematic-pcb-design-manufacturing-5566b2cf6963
+- YouTube tutorial: https://www.youtube.com/watch?v=vaCVh2SAZY4
+- download some CAD modules:
+  - https://www.snapeda.com/home/
+  - https://grabcad.com/library
+- ordered PCB from: https://jlcpcb.com/
 
 Gotchas:
 - PWM's max freq/precision
