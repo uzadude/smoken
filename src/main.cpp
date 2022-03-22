@@ -17,6 +17,7 @@ void setup()
   Serial.println("starting..");
 
   initFan();
+  initData();
   initLCD();
 
   initConfig();

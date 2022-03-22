@@ -14,19 +14,30 @@ void handle_OnConnect() {
   }
 }
 
-void addArray(DynamicJsonDocument &doc, std::string name, std::deque<double> dq, double factor) {
+void addArray(DynamicJsonDocument &doc, std::string name, double arr[], double factor) {
   JsonArray data = doc.createNestedArray(name);
   
-  int tsize = dq.size();
+  int tsize = getDataRowCount();
   for(int i = 0; i < tsize; i++){
-      data.add((int)(dq.at(i) / factor));
+      data.add((int)(arr[i] / factor));
   }
 }
 
+void addArray(DynamicJsonDocument &doc, std::string name, unsigned long arr[], double factor) {
+  JsonArray data = doc.createNestedArray(name);
+  
+  int tsize = getDataRowCount();
+  for(int i = 0; i < tsize; i++){
+      data.add((int)(arr[i] / factor));
+  }
+}
+
+
 void handle_data() {
-  //StaticJsonDocument<1024> doc;
-  DynamicJsonDocument doc(4096);
+  // trying to estimate the json size
+  DynamicJsonDocument doc(getDataRowCount() * 200);
   dataMeasures dm = getMeasures();
+  addArray(doc, "time_millis", dm.time_millis, 1);
   addArray(doc, "t1", dm.tmpsQ1, 1);
   addArray(doc, "t2", dm.tmpsQ2, 1);
   addArray(doc, "t3", dm.tmpsQ3, 1);

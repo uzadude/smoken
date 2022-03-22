@@ -58,6 +58,8 @@ https://playground.arduino.cc/Code/PIDLibrary/
 
 nice ESP32 tutorials: https://lastminuteengineers.com/handling-esp32-gpio-interrupts-tutorial/
 
+reference project: https://github.com/chris948/esp_grillcon/blob/master/esp_grillcon.ino
+
 PCB:
 - Used KiCAD
 - nice refs: https://medium.com/invent-io/getting-started-with-embedded-systems-3-schematic-pcb-design-manufacturing-5566b2cf6963
