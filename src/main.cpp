@@ -27,7 +27,7 @@ void setup()
   initFan();
 
   setPIDconfs(conf.getInt("setpoint"), conf.getInt("fmin"), conf.getInt("fmax"),
-              conf.getInt("kp"), conf.getInt("ki"), conf.getInt("kd"));
+              conf.getFloat("kp"), conf.getFloat("ki"), conf.getFloat("kd"));
   //setPIDconfs(30, 0, 255, 2, 5, 1);
 
   delay(2000);

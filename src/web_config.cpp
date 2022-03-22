@@ -50,21 +50,21 @@ String params = "["
   "{"
   "'name':'kp',"
   "'label':'PID P',"
-  "'type':"+String(INPUTNUMBER)+","
+  "'type':"+String(INPUTFLOAT)+","
   "'min':0,'max':10,"
   "'default':'2'"
   "},"
   "{"
   "'name':'ki',"
   "'label':'PID I',"
-  "'type':"+String(INPUTNUMBER)+","
+  "'type':"+String(INPUTFLOAT)+","
   "'min':0,'max':10,"
   "'default':'2'"
   "},"
   "{"
   "'name':'kd',"
   "'label':'PID D',"
-  "'type':"+String(INPUTNUMBER)+","
+  "'type':"+String(INPUTFLOAT)+","
   "'min':0,'max':10,"
   "'default':'2'"
   "}"
@@ -126,7 +126,7 @@ void handleRoot() {
     
     // update the PID
     setPIDconfs(conf.getInt("setpoint"), conf.getInt("fmin"), conf.getInt("fmax"),
-              conf.getInt("kp"), conf.getInt("ki"), conf.getInt("kd"));
+              conf.getFloat("kp"), conf.getFloat("ki"), conf.getFloat("kd"));
   }
 }
 
