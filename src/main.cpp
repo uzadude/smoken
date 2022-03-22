@@ -16,6 +16,7 @@ void setup()
   Serial.begin(9600);
   Serial.println("starting..");
 
+  initFan();
   initLCD();
 
   initConfig();
@@ -23,8 +24,6 @@ void setup()
   initWebServer();
 
   initThermocouple();
-
-  initFan();
 
   setPIDconfs(conf.getInt("setpoint"), conf.getInt("fmin"), conf.getInt("fmax"),
               conf.getFloat("kp"), conf.getFloat("ki"), conf.getFloat("kd"));

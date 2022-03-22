@@ -19,6 +19,7 @@ void initFan() {
   // (max frequency is 80M/11^2=39K)
   ledcSetup(CHAN_PWM, 25000, 8); 
   ledcAttachPin(PIN_FAN_PWM, CHAN_PWM);
+  ledcWrite(CHAN_PWM, 0); 
 
   // tacho
   pinMode(PIN_FAN_TACHO, INPUT_PULLUP);
