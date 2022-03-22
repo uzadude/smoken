@@ -1,18 +1,12 @@
-#include <WebServer.h>
+#include "FreeRTOS.h"
+#include <AsyncTCP.h>
+#include <ESPAsyncWebServer.h>
 #include <web_config.h>
 #include <ArduinoJson.h>
 #include <data.h>
 #include "SPIFFS.h"
 
-WebServer server(80);
-
-void handle_OnConnect() {
-  File htmlFile = SPIFFS.open("/index.html", "r");
-  if (htmlFile) {
-    server.send(200, "text/html", htmlFile.readString()); 
-    htmlFile.close();
-  }
-}
+AsyncWebServer server(80);
 
 void addArray(DynamicJsonDocument &doc, std::string name, double arr[], double factor) {
   JsonArray data = doc.createNestedArray(name);
@@ -33,7 +27,7 @@ void addArray(DynamicJsonDocument &doc, std::string name, unsigned long arr[], d
 }
 
 
-void handle_data() {
+String handle_data() {
 
   Serial.println("got data request");
 
@@ -53,12 +47,11 @@ void handle_data() {
   serializeJson(doc, output);
   //serializeJson(doc, Serial);
 
-  Serial.println("sending data response");
-  server.send(200, "application/json", output); 
+  return output;
 }
 
-void handle_NotFound(){
-  server.send(404, "text/plain", "Not found");
+void handle_NotFound(AsyncWebServerRequest *request) {
+    request->send(404, "text/plain", "Not found");
 }
 
 void initWebServer() {
@@ -69,8 +62,15 @@ void initWebServer() {
     return;
   }
 
-  server.on("/", handle_OnConnect);
-  server.on("/data", handle_data);
+  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(SPIFFS, "/index.html", String(), false);
+  });
+
+  server.on("/data", HTTP_GET, [](AsyncWebServerRequest *request){
+    Serial.println("sending data response");
+    request->send(200, "application/json", handle_data());
+  });
+
   server.onNotFound(handle_NotFound);
   
   initWebConfig();

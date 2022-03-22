@@ -1,6 +1,5 @@
-#include <WebServer.h>
 #include <ESPmDNS.h>
-#include <WebConfig.h>
+#include <AsyncWebConfig.h>
 #include <pid.h>
 #include <web_server.h>
 
@@ -70,12 +69,12 @@ String params = "["
   "}"
   "]";
 
-WebConfig conf;
+AsyncWebConfig conf;
 
 
-void handleRoot() {
-  conf.handleFormRequest(&server);
-  if (server.hasArg("SAVE")) {
+void handleRoot(AsyncWebServerRequest *request) {
+  conf.handleFormRequest(request);
+  if (request->hasParam("SAVE")) {
     uint8_t cnt = conf.getCount();
     Serial.println("*********** Configuration ************");
     for (uint8_t i = 0; i<cnt; i++) {
@@ -104,11 +103,4 @@ void initWebConfig() {
     Serial.println("MDNS responder gestartet");
   }
   server.on("/conf",handleRoot);
-  //server.begin(80);
 }
-
-// void loop() {
-//   // put your main code here, to run repeatedly:
-//   server.handleClient();
-// //  MDNS.update();
-// }

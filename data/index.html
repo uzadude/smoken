@@ -19,60 +19,68 @@ p {font-size: 14px;color: #888;margin-bottom: 10px;}
 </body>
 <script>
     var chartT = new Highcharts.Chart({
-    chart:{ renderTo : 'chart-t1' },
-    title: { text: 'Smoker Measurements' },
-    series: [
-        { name: "Smoker T", data: []},
-        { name: "Food T", data: []},
-        { name: "Target T", data: []},
-        { name: "PWM", data: []},
-        { name: "RPM", data: []},
-    ],
-    plotOptions: {
-        line: { animation: false,
-        dataLabels: { enabled: false }
-        }
-    },
-    xAxis: {
-      type: "datetime"
-    },
-    yAxis: {
-        title: { text: 'Temperature (Celsius)' }
-    },
-    time: {
-        useUTC: false
-    },
-    credits: { enabled: false }
-    });
-    setInterval(function ( ) {
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            var result = JSON.parse(this.responseText);
-            //console.log(result.data);
-
-            // change time format. last entry is the current time.
-            var espStartTime = new Date().getTime() - result.time_millis[result.time_millis.length - 1];
-            result.time_millis = result.time_millis.map(function(e) {
-                return espStartTime + e;
-            });
-
-            function combine(arrY) {
-                var c = result.time_millis.map(function(e, i) {
-                    return [e, arrY[i]];
-                });
-                return c;
+        chart: { 
+            renderTo : 'chart-t1',
+            zoomType: 'x'
+        },
+        title: { text: 'Smoker Measurements' },
+        series: [
+            { name: "Smoker T", data: []},
+            { name: "Food T", data: []},
+            { name: "Target T", data: []},
+            { name: "PWM", data: []},
+            { name: "RPM", data: []},
+        ],
+        plotOptions: {
+            line: { animation: false,
+                dataLabels: { enabled: false }
             }
-                
-            chartT.series[0].setData(combine(result.t1));
-            chartT.series[1].setData(combine(result.t2));
-            chartT.series[2].setData(combine(result.t3));
-            chartT.series[3].setData(combine(result.pwm));
-            chartT.series[4].setData(combine(result.rpm));
-        }
-    };
-    xhttp.open("GET", "/data", true);
-    xhttp.send();
-    }, 10000 ) ;
+        },
+        xAxis: {
+            type: "datetime"
+        },
+        yAxis: {
+            title: { text: 'Temperature (Celsius)' }
+        },
+        time: {
+            useUTC: false
+        },
+        credits: { enabled: false }
+    });
+
+    function refreshData() {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                var result = JSON.parse(this.responseText);
+                //console.log(result.data);
+
+                // change time format. last entry is the current time.
+                var espStartTime = new Date().getTime() - result.time_millis[result.time_millis.length - 1];
+                result.time_millis = result.time_millis.map(function(e) {
+                    return espStartTime + e;
+                });
+
+                function combine(arrY) {
+                    var c = result.time_millis.map(function(e, i) {
+                        return [e, arrY[i]];
+                    });
+                    return c;
+                }
+                    
+                chartT.series[0].setData(combine(result.t1));
+                chartT.series[1].setData(combine(result.t2));
+                chartT.series[2].setData(combine(result.t3));
+                chartT.series[3].setData(combine(result.pwm));
+                chartT.series[4].setData(combine(result.rpm));
+            }
+        };
+        xhttp.open("GET", "/data", true);
+        xhttp.send();
+    }
+    
+    refreshData();
+    setInterval(refreshData, 10000) ;
+
 </script>
 </html>

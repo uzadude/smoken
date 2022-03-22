@@ -1,7 +1,5 @@
-#include <WebServer.h>
-#include <WebConfig.h>
+#include <AsyncWebConfig.h>
 
-//extern WebServer server;
-extern WebConfig conf;
+extern AsyncWebConfig conf;
 void initConfig();
 void initWebConfig();

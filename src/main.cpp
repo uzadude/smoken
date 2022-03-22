@@ -36,7 +36,7 @@ void setup()
 void loop()
 {
 
-  server.handleClient();
+  //server.handleClient();
 
   double tmp1 = readTC(0);
   updatePID(tmp1);
