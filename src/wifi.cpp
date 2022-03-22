@@ -13,13 +13,20 @@ void initWIFI() {
   Serial.print(conf.values[0]);
   Serial.println(" network");
 
+  sprintf(getLCDbuffer(0,0), "connecting to: ");
+  sprintf(getLCDbuffer(0,1), "%s", conf.values[0]);
+  printLCD(0);
+
   if (conf.values[0] != "") {
     WiFi.begin(conf.values[0].c_str(),conf.values[1].c_str());
     uint8_t cnt = 0;
     while ((WiFi.status() != WL_CONNECTED) && (cnt<10)){
-      delay(500);
+      delay(1000);
       Serial.print(".");
       cnt++;
+      sprintf(getLCDbuffer(0,0), "%s", conf.values[0]);
+      sprintf(getLCDbuffer(0,1), std::string(cnt, '.').c_str());
+      printLCD(0);
     }
     Serial.println();
     if (WiFi.status() == WL_CONNECTED) {
