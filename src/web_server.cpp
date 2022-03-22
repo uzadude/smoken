@@ -34,6 +34,9 @@ void addArray(DynamicJsonDocument &doc, std::string name, unsigned long arr[], d
 
 
 void handle_data() {
+
+  Serial.println("got data request");
+
   // trying to estimate the json size
   DynamicJsonDocument doc(getDataRowCount() * 200);
   dataMeasures dm = getMeasures();
@@ -50,6 +53,7 @@ void handle_data() {
   serializeJson(doc, output);
   //serializeJson(doc, Serial);
 
+  Serial.println("sending data response");
   server.send(200, "application/json", output); 
 }
 

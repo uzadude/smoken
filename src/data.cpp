@@ -12,8 +12,8 @@ void downsample() {
   if (rowCount>NUM_HIST_POINTS) {
 
     Serial.println("Down-sampling data");
-    //i=2 leaves the first entry, preserving cook start time
-    for (int i = 2; i< (rowCount / 2) ; i++){
+    // skip the first entry, to preserve start time
+    for (int i = 1; i< (rowCount / 2) ; i++){
 
         int newRow = (i * 2) - 1;
 
