@@ -1,8 +1,8 @@
 #include <data.h>
 #include <HardwareSerial.h>
 
-#define NUM_HIST_POINTS    100
-#define HIST_SAMPLE_INTERVAL    5000
+#define NUM_HIST_POINTS         256
+#define HIST_SAMPLE_INTERVAL  20000
 unsigned long updateDataMillis = millis();
 
 dataMeasures measures;
@@ -12,10 +12,9 @@ void downsample() {
   if (rowCount>NUM_HIST_POINTS) {
 
     Serial.println("Down-sampling data");
-    // skip the first entry, to preserve start time
-    for (int i = 1; i< (rowCount / 2) ; i++){
+    for (int i = 0; i < (rowCount-1) / 2 ; i++){
 
-        int newRow = (i * 2) - 1;
+        int newRow = i * 2 + 1;
 
         measures.time_millis[i] = measures.time_millis[newRow];
         measures.tmpsQ1[i] = measures.tmpsQ1[newRow];

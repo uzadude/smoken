@@ -4,6 +4,28 @@
 #include <web_config.h>
 #include <ESPmDNS.h>
 
+void begin() {
+  WiFi.begin(conf.values[0].c_str(),conf.values[1].c_str());
+}
+
+void WiFi_Connected(WiFiEvent_t event, WiFiEventInfo_t info){
+  Serial.println("Connected to AP successfully!");
+}
+
+void Get_IPAddress(WiFiEvent_t event, WiFiEventInfo_t info){
+  Serial.println("WIFI is connected!");
+  Serial.println("IP address: ");
+  Serial.println(WiFi.localIP());
+}
+
+void Wifi_disconnected(WiFiEvent_t event, WiFiEventInfo_t info){
+  Serial.println("Disconnected from WIFI access point");
+  Serial.print("WiFi lost connection. Reason: ");
+  Serial.println(info.disconnected.reason);
+  Serial.println("Reconnecting...");
+  begin();
+}
+
 void initWIFI() {
   boolean connected = false;
   const char * wifi_str;
@@ -18,7 +40,13 @@ void initWIFI() {
   printLCD(0);
 
   if (conf.values[0] != "") {
-    WiFi.begin(conf.values[0].c_str(),conf.values[1].c_str());
+    WiFi.disconnect(true);
+    delay(1000);
+    WiFi.onEvent(WiFi_Connected,SYSTEM_EVENT_STA_CONNECTED);
+    WiFi.onEvent(Get_IPAddress, SYSTEM_EVENT_STA_GOT_IP);
+    WiFi.onEvent(Wifi_disconnected, SYSTEM_EVENT_STA_DISCONNECTED); 
+
+    begin();
     uint8_t cnt = 0;
     while ((WiFi.status() != WL_CONNECTED) && (cnt<10)){
       delay(1000);
