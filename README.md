@@ -1,14 +1,23 @@
 # Smoken!
-A temperature PID controlled fan for charcoal smoker using ESP32.
+A temperature controlled fan for charcoal smoker using ESP32.
  
 ## Background
-After taking a welding course I decided to build a smoker. Shortly after, I realized that I must have a solution to keep the temperature steady for many hours. Searching around the internet I found only terribly expensive products (like the [FIREBOARD](https://www.fireboard.com/shop/fireboard-2-drive/?fba_ref=14)). So that motivated me to try my first IOT project!
+After taking a welding course, I decided to build a smoker. Shortly after, I realized I must have a solution to keep the temperature steady for many hours. Searching around the internet I found only terribly expensive products (like the [FIREBOARD](https://www.fireboard.com/shop/fireboard-2-drive/?fba_ref=14)). That motivated me to try my first IOT project!
+
 I took this opportunity to gain some skills in the electrical engineering domain.
 I used an ESP32 for the MCU (started from [ESP32 starter kit](https://www.ebay.com/itm/303652581313)), built a working prototype using a breadboard and then went on to design a PCB for it (using [KiCad](https://www.kicad.org/)).
-I will try to highlight the main lessons I've learned throughout this process.
 
-## Circuit Schema
-I ended up building the below circuit. I used a 12V/5A DC input, 4-PIN fan, step-down regulator, 1602 LCD screen, two max6675 thermocouples, and a potentiometer.
+I will try to highlight the main lessons learned throughout this process.
+
+## How It Works
+- An ESP32 is connected to a thermocouple (with max6675 amplifier) to measure the smoker's current temprature. Another thermocouple is connected just to monitor the meat's temprature.
+- The ESP32 is also connected to a 4-pin fan and controls it through a PWM channel with A PID algorithm.
+- An external power of 12V/5A is used for both the fan and the ESP32 (through a step-down regulator).
+- An 1602 LCD screen is used for simple information.
+- A web server is used to monitor the current status, and configure things like the wifi credentials and some paramteres.
+- A potentiometer is also available to have manual control over the fan.
+
+### Circuit Schema
 ![Smoker Fan Schema](imgs/schema.png "Smoker Fan Schema")
 
 ### Inventory List
@@ -30,19 +39,18 @@ I ended up building the below circuit. I used a 12V/5A DC input, 4-PIN fan, step
 
 ### Afterthoughts
 - I could have used a much weaker fan
-- replace the 1602 LCD with 12864 OLED
+- Replace the 1602 LCD with 12864 OLED
 
 ### Gotchas
-- tacho required RC filter to get the correct reading
-- pin 4 as ADC with wifi.h [bug](https://github.com/espressif/arduino-esp32/issues/102)
+- Fan's tacho required RC filter to get the correct reading
+- Pin 4 as ADC with wifi.h [bug](https://github.com/espressif/arduino-esp32/issues/102)
 
 ## Code
-Main takeaways:
-- use git from the beginning
 - Use Platform IO as it is way more convenient than the Arduino IDE
 - Web server using ESPAsyncWebServer
 - Web-based config using AsyncWebConfig
 - Use the SPIFFS to save data like a webpage, config file, and data history
+- Use git from the beginning
 
 ### Gotchas
 - [PWM's max freq/precision](src/fan.cpp#L18)
