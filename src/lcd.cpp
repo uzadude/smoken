@@ -8,7 +8,7 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 char lcdBuffer[NUM_SCREENS][2][16];
 
 int curScreen = 0;
-unsigned long lcdMillis;
+unsigned long lastPrintMS;
 
 char* getLCDbuffer(int screen, int line) {
     return lcdBuffer[screen][line];
@@ -18,7 +18,7 @@ void initLCD() {
   //Wire.begin(SDA, SCL);
   lcd.init();
   lcd.backlight();
-  lcdMillis = millis();
+  lastPrintMS = millis();
 }
 
 void printLCD(int screenNum) {
@@ -30,8 +30,8 @@ void printLCD(int screenNum) {
 
 void refreshLCD() {
 
-  if (millis() - lcdMillis > 3000) {
-   lcdMillis = millis();
+  if (millis() - lastPrintMS > 3000) {
+   lastPrintMS = millis();
 
     printLCD(curScreen);
     Serial.println(lcdBuffer[curScreen][0]);

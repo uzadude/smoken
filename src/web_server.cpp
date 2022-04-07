@@ -41,7 +41,7 @@ String handle_data() {
   addArray(doc, "pwm", dm.pwm, 1);
   addArray(doc, "rpm", dm.rpm, 1000);
 
-  //doc["blah"] = 123;
+  doc["wifi"] = WiFi.RSSI();
 
   String output;
   serializeJson(doc, output);
